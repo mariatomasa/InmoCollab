@@ -1,0 +1,145 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  AGENCY
+}
+
+enum VerifyStatus {
+  PENDING
+  VERIFIED
+  REJECTED
+}
+
+enum VisitStatus {
+  PENDING
+  CONFIRMED
+  COMPLETED
+  CANCELLED
+}
+
+enum AccessLevel {
+  EXPLORER
+  VERIFIED
+  ACTIVE
+  PREFERRED
+}
+
+model User {
+  id          String      @id @default(cuid())
+  email       String      @unique
+  password    String
+  name        String
+  agency      String?
+  phone       String?
+  role        Role        @default(AGENCY)
+  level       AccessLevel @default(EXPLORER)
+  legalSigned Boolean     @default(false)
+  legalDate   DateTime?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  clients    Client[]
+  visits     Visit[]
+  activities Activity[]
+}
+
+model Property {
+  id          String   @id @default(cuid())
+  name        String
+  zone        String
+  type        String
+  bedrooms    Int
+  bathrooms   Int
+  area        Int
+  price       Int
+  totalUnits  Int
+  availUnits  Int
+  pool        Boolean  @default(false)
+  parking     Boolean  @default(false)
+  garden      Boolean  @default(false)
+  terrace     Boolean  @default(false)
+  completion  String
+  descEs      String
+  descEn      String
+  featuresEs  String[]
+  featuresEn  String[]
+  address     String
+  developer   String
+  devPhone    String
+  gradient    String
+  soldWeek    Int      @default(0)
+  viewsToday  Int      @default(0)
+  hot         Boolean  @default(false)
+  isNew       Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  clients  Client[]
+  visits   Visit[]
+}
+
+model Client {
+  id           String       @id @default(cuid())
+  name         String
+  dni          String
+  phone        String
+  email        String?
+  notes        String?
+  verifyStatus VerifyStatus @default(PENDING)
+  verifyDate   DateTime?
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  propertyId String
+  property   Property @relation(fields: [propertyId], references: [id])
+  visits     Visit[]
+
+  @@unique([dni, propertyId])
+}
+
+model Visit {
+  id        String      @id @default(cuid())
+  date      String
+  time      String
+  notes     String?
+  status    VisitStatus @default(PENDING)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  propertyId String
+  property   Property @relation(fields: [propertyId], references: [id])
+  clientId   String
+  client     Client   @relation(fields: [clientId], references: [id])
+}
+
+model Activity {
+  id        String   @id @default(cuid())
+  action    String
+  details   String?
+  createdAt DateTime @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+}
+
+model ContactRequest {
+  id        String   @id @default(cuid())
+  agency    String
+  person    String
+  email     String
+  phone     String
+  message   String?
+  createdAt DateTime @default(now())
+}
