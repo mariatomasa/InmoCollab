@@ -25,6 +25,19 @@ enum VisitStatus {
   CANCELLED
 }
 
+enum PipelineStage {
+  REGISTRO
+  VERIFICACION
+  VERIFICADO
+  CONTACTO_PROMOTORA
+  CITA_AGENDADA
+  VISITA_REALIZADA
+  NEGOCIACION
+  RESERVA
+  CERRADO
+  DESCARTADO
+}
+
 enum AccessLevel {
   EXPLORER
   VERIFIED
@@ -46,9 +59,10 @@ model User {
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
 
-  clients    Client[]
-  visits     Visit[]
-  activities Activity[]
+  clients        Client[]
+  visits         Visit[]
+  activities     Activity[]
+  pipelineEvents PipelineEvent[]
 }
 
 model Property {
@@ -87,24 +101,39 @@ model Property {
 }
 
 model Client {
-  id           String       @id @default(cuid())
-  name         String
-  dni          String
-  phone        String
-  email        String?
-  notes        String?
-  verifyStatus VerifyStatus @default(PENDING)
-  verifyDate   DateTime?
-  createdAt    DateTime     @default(now())
-  updatedAt    DateTime     @updatedAt
+  id             String        @id @default(cuid())
+  name           String
+  dni            String
+  phone          String
+  email          String?
+  notes          String?
+  verifyStatus   VerifyStatus  @default(PENDING)
+  verifyDate     DateTime?
+  pipelineStage  PipelineStage @default(REGISTRO)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
 
   userId     String
   user       User     @relation(fields: [userId], references: [id])
   propertyId String
   property   Property @relation(fields: [propertyId], references: [id])
   visits     Visit[]
+  pipelineEvents PipelineEvent[]
 
   @@unique([dni, propertyId])
+}
+
+model PipelineEvent {
+  id        String        @id @default(cuid())
+  fromStage PipelineStage?
+  toStage   PipelineStage
+  note      String?
+  createdAt DateTime      @default(now())
+
+  clientId String
+  client   Client @relation(fields: [clientId], references: [id])
+  userId   String
+  user     User   @relation(fields: [userId], references: [id])
 }
 
 model Visit {

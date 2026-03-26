@@ -47,4 +47,14 @@ export const api = {
 
   // Contact
   sendContact: (data) => request('/contact', { method: 'POST', body: JSON.stringify(data) }),
+
+  // Pipeline
+  getPipeline: (stage) => {
+    const qs = stage ? `?stage=${stage}` : '';
+    return request(`/pipeline${qs}`);
+  },
+  getPipelineSummary: () => request('/pipeline/summary'),
+  getPipelineDetail: (id) => request(`/pipeline/${id}`),
+  updatePipelineStage: (id, stage, note) => request(`/pipeline/${id}/stage`, { method: 'PATCH', body: JSON.stringify({ stage, note }) }),
+  addPipelineNote: (id, note) => request(`/pipeline/${id}/note`, { method: 'POST', body: JSON.stringify({ note }) }),
 };

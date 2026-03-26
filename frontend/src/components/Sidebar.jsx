@@ -1,4 +1,4 @@
-import { Home, Building2, Users, Calendar, Activity, Gavel, MessageCircle, LogOut, Shield, X } from 'lucide-react';
+import { Home, Building2, Users, Calendar, Activity, Gavel, MessageCircle, LogOut, Shield, X, GitBranchPlus } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { C, btn } from '../lib/colors.js';
 import { useLang } from '../hooks/useLang.jsx';
@@ -15,6 +15,7 @@ export default function Sidebar({ mobile, onClose }) {
     { path: '/app/properties', icon: Building2, label: t.properties },
     { path: '/app/clients', icon: Users, label: t.clients },
     { path: '/app/visits', icon: Calendar, label: t.visits },
+    { path: '/app/pipeline', icon: GitBranchPlus, label: t.pipeline || 'Seguimiento' },
     { path: '/app/activity', icon: Activity, label: t.activity },
     { path: '/app/legal', icon: Gavel, label: t.legal },
     { path: '/app/contact', icon: MessageCircle, label: t.contact },

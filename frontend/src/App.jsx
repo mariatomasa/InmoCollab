@@ -16,6 +16,7 @@ import Visits from './pages/Visits.jsx';
 import Activity from './pages/Activity.jsx';
 import Legal from './pages/Legal.jsx';
 import Contact from './pages/Contact.jsx';
+import Pipeline from './pages/Pipeline.jsx';
 
 function ProtectedLayout() {
   const { user, loading } = useAuth();
@@ -58,6 +59,7 @@ function VisitsWrapper() { return <Visits />; }
 function ActivityWrapper() { return <Activity />; }
 function LegalWrapper() { return <Legal showToast={useToast()} />; }
 function ContactWrapper() { return <Contact showToast={useToast()} />; }
+function PipelineWrapper() { return <Pipeline showToast={useToast()} />; }
 
 function AppRoutes() {
   const [toast, setToast] = useState(null);
@@ -76,6 +78,7 @@ function AppRoutes() {
           <Route path="properties/:id" element={<PropertyDetailWrapper />} />
           <Route path="clients" element={<ClientsWrapper />} />
           <Route path="visits" element={<VisitsWrapper />} />
+          <Route path="pipeline" element={<PipelineWrapper />} />
           <Route path="activity" element={<ActivityWrapper />} />
           <Route path="legal" element={<LegalWrapper />} />
           <Route path="contact" element={<ContactWrapper />} />
