@@ -55,7 +55,7 @@ function DashboardWrapper() { return <Dashboard />; }
 function PropertiesWrapper() { return <Properties />; }
 function PropertyDetailWrapper() { return <PropertyDetail showToast={useToast()} />; }
 function ClientsWrapper() { return <Clients showToast={useToast()} />; }
-function VisitsWrapper() { return <Visits />; }
+function VisitsWrapper() { return <Visits showToast={useToast()} />; }
 function ActivityWrapper() { return <Activity />; }
 function LegalWrapper() { return <Legal showToast={useToast()} />; }
 function ContactWrapper() { return <Contact showToast={useToast()} />; }
