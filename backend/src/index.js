@@ -9,6 +9,7 @@ import visitRoutes from './routes/visits.js';
 import activityRoutes from './routes/activity.js';
 import contactRoutes from './routes/contact.js';
 import pipelineRoutes from './routes/pipeline.js';
+import adminRoutes from './routes/admin.js';
 
 const prisma = new PrismaClient();
 const app = express();
@@ -31,6 +32,7 @@ app.use('/api/visits', visitRoutes);
 app.use('/api/activity', activityRoutes);
 app.use('/api/contact', contactRoutes);
 app.use('/api/pipeline', pipelineRoutes);
+app.use('/api/admin', adminRoutes);
 
 app.listen(PORT, () => {
   console.log(`InmoCollab API running on port ${PORT}`);

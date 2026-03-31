@@ -1,4 +1,4 @@
-import { Home, Building2, Users, Calendar, Activity, Gavel, MessageCircle, LogOut, Shield, X, GitBranchPlus } from 'lucide-react';
+import { Home, Building2, Users, Calendar, Activity, Gavel, MessageCircle, LogOut, Shield, X, GitBranchPlus, LayoutDashboard } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { C, btn } from '../lib/colors.js';
 import { useLang } from '../hooks/useLang.jsx';
@@ -10,7 +10,12 @@ export default function Sidebar({ mobile, onClose }) {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const adminItems = user?.role === 'ADMIN' ? [
+    { path: '/app/admin', icon: LayoutDashboard, label: t.adminMenu || 'Panel Admin' },
+  ] : [];
+
   const items = [
+    ...adminItems,
     { path: '/app', icon: Home, label: t.dashboard },
     { path: '/app/properties', icon: Building2, label: t.properties },
     { path: '/app/clients', icon: Users, label: t.clients },

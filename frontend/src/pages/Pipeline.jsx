@@ -409,6 +409,14 @@ export default function Pipeline({ showToast }) {
                 </button>
               </>
             )}
+            {c.pipelineStage === 'DESCARTADO' && (
+              <>
+                <button style={{ ...btn(C.ok, C.white), padding: '8px 16px', fontSize: 12 }}
+                  onClick={() => { handleQuickMove(c.id, 'REGISTRO'); setSelectedClient(null); }}>
+                  {t.pipeReactivar || 'Reactivar cliente'}
+                </button>
+              </>
+            )}
             <button style={{ ...btn(C.lgray, C.dgray), padding: '8px 16px', fontSize: 12 }}
               onClick={() => setSelectedClient(null)}>
               {t.cancel || 'Cerrar'}

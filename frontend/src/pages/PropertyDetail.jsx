@@ -18,6 +18,7 @@ export default function PropertyDetail({ showToast }) {
   const [showVisitForm, setShowVisitForm] = useState(false);
   const [similarProps, setSimilarProps] = useState([]);
   const [showSimilar, setShowSimilar] = useState(false);
+  const [activeImg, setActiveImg] = useState(0);
 
   useEffect(() => {
     api.getProperty(id).then(setP).catch(() => nav('/app/properties'));
@@ -74,6 +75,32 @@ export default function PropertyDetail({ showToast }) {
       <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 20 }}>
         {/* LEFT */}
         <div>
+          {/* IMAGE GALLERY */}
+          {p.images && p.images.length > 0 && (
+            <div style={{ ...card(), padding: 0, overflow: 'hidden', marginBottom: 16 }}>
+              <div style={{ height: 240, background: `url(${p.images[activeImg]}) center/cover`, position: 'relative' }}>
+                {p.images.length > 1 && (
+                  <>
+                    <button onClick={() => setActiveImg(i => (i - 1 + p.images.length) % p.images.length)}
+                      style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', background: 'rgba(0,0,0,.5)', border: 'none', borderRadius: '50%', width: 32, height: 32, cursor: 'pointer', color: C.white, fontSize: 18, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>‹</button>
+                    <button onClick={() => setActiveImg(i => (i + 1) % p.images.length)}
+                      style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', background: 'rgba(0,0,0,.5)', border: 'none', borderRadius: '50%', width: 32, height: 32, cursor: 'pointer', color: C.white, fontSize: 18, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>›</button>
+                  </>
+                )}
+                <div style={{ position: 'absolute', bottom: 8, right: 12, background: 'rgba(0,0,0,.5)', borderRadius: 20, padding: '2px 10px', fontSize: 11, color: C.white }}>
+                  {activeImg + 1} / {p.images.length}
+                </div>
+              </div>
+              {p.images.length > 1 && (
+                <div style={{ display: 'flex', gap: 6, padding: 8, overflowX: 'auto' }}>
+                  {p.images.map((img, i) => (
+                    <div key={i} onClick={() => setActiveImg(i)}
+                      style={{ width: 56, height: 40, background: `url(${img}) center/cover`, borderRadius: 6, cursor: 'pointer', flexShrink: 0, border: `2px solid ${i === activeImg ? C.gold : 'transparent'}`, transition: 'border .2s' }} />
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
           <div style={card()}>
             <p style={{ color: C.text, lineHeight: 1.6, margin: '0 0 16px' }}>{desc}</p>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12, marginBottom: 16 }}>

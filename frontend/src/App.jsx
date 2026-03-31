@@ -17,6 +17,7 @@ import Activity from './pages/Activity.jsx';
 import Legal from './pages/Legal.jsx';
 import Contact from './pages/Contact.jsx';
 import Pipeline from './pages/Pipeline.jsx';
+import AdminPanel from './pages/AdminPanel.jsx';
 
 function ProtectedLayout() {
   const { user, loading } = useAuth();
@@ -60,6 +61,7 @@ function ActivityWrapper() { return <Activity />; }
 function LegalWrapper() { return <Legal showToast={useToast()} />; }
 function ContactWrapper() { return <Contact showToast={useToast()} />; }
 function PipelineWrapper() { return <Pipeline showToast={useToast()} />; }
+function AdminPanelWrapper() { return <AdminPanel showToast={useToast()} />; }
 
 function AppRoutes() {
   const [toast, setToast] = useState(null);
@@ -82,6 +84,7 @@ function AppRoutes() {
           <Route path="activity" element={<ActivityWrapper />} />
           <Route path="legal" element={<LegalWrapper />} />
           <Route path="contact" element={<ContactWrapper />} />
+          <Route path="admin" element={<AdminPanelWrapper />} />
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

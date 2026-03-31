@@ -43,7 +43,8 @@ export default function Properties() {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(280px,1fr))', gap: 16 }}>
           {filtered.map(p => (
             <div key={p.id} style={{ ...card(), padding: 0, overflow: 'hidden', cursor: 'pointer', transition: 'transform .2s', border: `1px solid ${C.lgray}` }} onClick={() => nav(`/app/properties/${p.id}`)}>
-              <div style={{ height: 140, background: p.gradient, position: 'relative', display: 'flex', alignItems: 'flex-end', padding: 12 }}>
+              <div style={{ height: 140, background: p.images?.[0] ? 'none' : p.gradient, backgroundImage: p.images?.[0] ? `url(${p.images[0]})` : 'none', backgroundSize: 'cover', backgroundPosition: 'center', position: 'relative', display: 'flex', alignItems: 'flex-end', padding: 12 }}>
+                {p.images?.[0] && <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,.5) 40%, transparent)' }} />}
                 <div style={{ position: 'absolute', top: 8, right: 8, display: 'flex', gap: 4, flexWrap: 'wrap' }}>
                   {p.hot && <span style={badge(C.err)}><Flame size={10} />{t.hotP}</span>}
                   {p.isNew && <span style={badge(C.ok)}><Sparkles size={10} />{t.newP}</span>}

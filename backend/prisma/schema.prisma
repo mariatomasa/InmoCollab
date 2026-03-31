@@ -89,6 +89,7 @@ model Property {
   developer   String
   devPhone    String
   gradient    String
+  images      String[] @default([])
   soldWeek    Int      @default(0)
   viewsToday  Int      @default(0)
   hot         Boolean  @default(false)

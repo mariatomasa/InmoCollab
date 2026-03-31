@@ -49,6 +49,9 @@ export const api = {
   // Contact
   sendContact: (data) => request('/contact', { method: 'POST', body: JSON.stringify(data) }),
 
+  // Admin
+  getAdminDashboard: () => request('/admin/dashboard'),
+
   // Pipeline
   getPipeline: (stage) => {
     const qs = stage ? `?stage=${stage}` : '';
