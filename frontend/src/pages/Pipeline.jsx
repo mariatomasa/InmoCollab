@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
-import { ChevronRight, ChevronDown, MessageSquarePlus, Clock, User, Building2, Phone, Mail, ArrowRight, X, Filter, BarChart3 } from 'lucide-react';
+import { ChevronRight, ChevronDown, MessageSquarePlus, Clock, User, Building2, Phone, Mail, ArrowRight, X, Filter, BarChart3, Lightbulb, MapPin, BedDouble, Bath, Maximize } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { api } from '../lib/api.js';
 import { C, btn, card, badge } from '../lib/colors.js';
 import { useLang } from '../hooks/useLang.jsx';
@@ -24,6 +25,7 @@ const ACTIVE_STAGES = STAGES.filter(s => s.key !== 'DESCARTADO');
 export default function Pipeline({ showToast }) {
   const { t } = useLang();
   const { user } = useAuth();
+  const nav = useNavigate();
   const isAdmin = user?.role === 'ADMIN';
 
   const [clients, setClients] = useState([]);
@@ -36,6 +38,8 @@ export default function Pipeline({ showToast }) {
   const [showNoteModal, setShowNoteModal] = useState(null);
   const [noteText, setNoteText] = useState('');
   const [filterAgency, setFilterAgency] = useState('');
+  const [similarProps, setSimilarProps] = useState([]);
+  const [loadingSimilar, setLoadingSimilar] = useState(false);
 
   const load = useCallback(async () => {
     try {
@@ -157,7 +161,14 @@ export default function Pipeline({ showToast }) {
 
     return (
       <div style={{ ...card(), padding: 14, marginBottom: 10, borderLeft: `4px solid ${stageInfo.color}`, cursor: 'pointer' }}
-        onClick={() => setSelectedClient(client)}>
+        onClick={() => {
+          setSelectedClient(client);
+          if (client.propertyId) {
+            setLoadingSimilar(true);
+            setSimilarProps([]);
+            api.getSimilarProperties(client.propertyId).then(s => setSimilarProps(s)).catch(() => {}).finally(() => setLoadingSimilar(false));
+          }
+        }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 6 }}>
           <div>
             <div style={{ fontWeight: 700, fontSize: 14, color: C.text }}>{client.name}</div>
@@ -342,6 +353,44 @@ export default function Pipeline({ showToast }) {
                 </div>
               </div>
             ))}
+          </div>
+
+          {/* Similar properties - recommendations */}
+          <div style={{ marginBottom: 16 }}>
+            <h3 style={{ fontSize: 14, color: C.navy, marginBottom: 10, display: 'flex', alignItems: 'center', gap: 6 }}>
+              <Lightbulb size={14} color={C.gold} />{t.simTitle || 'Otras propiedades que le pueden interesar'}
+            </h3>
+            {loadingSimilar && <div style={{ color: C.gray, fontSize: 12 }}>{t.loading}</div>}
+            {!loadingSimilar && similarProps.length === 0 && (
+              <div style={{ color: C.gray, fontSize: 12 }}>{t.simNone || 'No se han encontrado propiedades similares'}</div>
+            )}
+            {!loadingSimilar && similarProps.length > 0 && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8, maxHeight: 250, overflowY: 'auto' }}>
+                {similarProps.map(s => (
+                  <div key={s.id} style={{ background: C.off, borderRadius: 8, padding: 10, cursor: 'pointer', borderLeft: `3px solid ${s.gradient || C.mid}`, transition: 'transform .15s' }}
+                    onClick={() => { setSelectedClient(null); nav(`/app/properties/${s.id}`); }}
+                    onMouseEnter={e => e.currentTarget.style.transform = 'translateX(3px)'}
+                    onMouseLeave={e => e.currentTarget.style.transform = 'none'}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <div>
+                        <div style={{ fontWeight: 600, fontSize: 13, color: C.navy }}>{s.name}</div>
+                        <div style={{ fontSize: 11, color: C.dgray, display: 'flex', alignItems: 'center', gap: 4 }}>
+                          <MapPin size={10} />{s.zone} · {s.type}
+                        </div>
+                      </div>
+                      <div style={{ textAlign: 'right' }}>
+                        <div style={{ fontWeight: 700, fontSize: 14, color: C.navy }}>{s.price?.toLocaleString()}€</div>
+                        <div style={{ fontSize: 10, color: C.dgray }}>{s.area}m² · {s.bedrooms} <BedDouble size={10} /></div>
+                      </div>
+                    </div>
+                    <div style={{ display: 'flex', gap: 6, marginTop: 4 }}>
+                      {c.property && s.zone === c.property.zone && <span style={{ background: '#D1FAE5', color: '#059669', padding: '2px 6px', borderRadius: 4, fontSize: 10 }}>{t.simSameZone || 'Misma zona'}</span>}
+                      {c.property && Math.abs(s.price - c.property.price) / c.property.price <= 0.1 && <span style={{ background: '#DBEAFE', color: '#2563EB', padding: '2px 6px', borderRadius: 4, fontSize: 10 }}>{t.simSamePrice || 'Precio similar'}</span>}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Quick actions */}

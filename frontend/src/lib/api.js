@@ -31,6 +31,7 @@ export const api = {
   },
   getProperty: (id) => request(`/properties/${id}`),
   getFilters: () => request('/properties/meta/filters'),
+  getSimilarProperties: (id) => request(`/properties/${id}/similar`),
 
   // Clients
   getClients: () => request('/clients'),

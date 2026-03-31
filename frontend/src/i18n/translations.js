@@ -113,6 +113,12 @@ export const T = {
     pipePromocion: "Promoción", pipeAgencia: "Agencia",
     pipeToday: "Hoy", pipeYesterday: "Ayer", pipeDaysAgo: "días", pipeVisitOn: "Visita",
     loading: "Cargando...",
+    // Similar / Recommendations
+    simTitle: "Otras propiedades que le pueden interesar",
+    simDesc: "Basado en zona, precio y características similares a la propiedad seleccionada.",
+    simSameZone: "Misma zona",
+    simSamePrice: "Precio similar",
+    simNone: "No se han encontrado propiedades similares",
     // Visits page
     visTitle: "Visitas", visSubtitle: "Gestión y seguimiento de todas las visitas programadas",
     visPending: "Pendiente", visConfirmed: "Confirmada", visCompleted: "Completada", visCancelled: "Cancelada",
@@ -251,6 +257,12 @@ export const T = {
     pipePromocion: "Property", pipeAgencia: "Agency",
     pipeToday: "Today", pipeYesterday: "Yesterday", pipeDaysAgo: "days", pipeVisitOn: "Visit",
     loading: "Loading...",
+    // Similar / Recommendations
+    simTitle: "Other properties they may be interested in",
+    simDesc: "Based on similar zone, price and features to the selected property.",
+    simSameZone: "Same area",
+    simSamePrice: "Similar price",
+    simNone: "No similar properties found",
     // Visits page
     visTitle: "Visits", visSubtitle: "Manage and track all scheduled visits",
     visPending: "Pending", visConfirmed: "Confirmed", visCompleted: "Completed", visCancelled: "Cancelled",

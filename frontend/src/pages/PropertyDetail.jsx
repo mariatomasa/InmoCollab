@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, MapPin, Lock, Flame, Sparkles, BedDouble, Bath, Maximize, Calendar, Waves, Car, TreePine, Sun, Phone, Eye, ShieldCheck, AlertTriangle, Send, Share2, Clock, XCircle, CheckCircle } from 'lucide-react';
+import { ArrowLeft, MapPin, Lock, Flame, Sparkles, BedDouble, Bath, Maximize, Calendar, Waves, Car, TreePine, Sun, Phone, Eye, ShieldCheck, AlertTriangle, Send, Share2, Clock, XCircle, CheckCircle, Lightbulb } from 'lucide-react';
 import { C, btn, card, badge } from '../lib/colors.js';
 import { useLang } from '../hooks/useLang.jsx';
 import { useAuth } from '../hooks/useAuth.jsx';
@@ -16,6 +16,8 @@ export default function PropertyDetail({ showToast }) {
   const [clients, setClients] = useState([]);
   const [showClientForm, setShowClientForm] = useState(false);
   const [showVisitForm, setShowVisitForm] = useState(false);
+  const [similarProps, setSimilarProps] = useState([]);
+  const [showSimilar, setShowSimilar] = useState(false);
 
   useEffect(() => {
     api.getProperty(id).then(setP).catch(() => nav('/app/properties'));
@@ -38,6 +40,8 @@ export default function PropertyDetail({ showToast }) {
       setShowClientForm(false);
       showToast?.(t.verifyPending);
       api.getClients().then(c => setClients(c.filter(cl => cl.propertyId === id)));
+      // Load similar properties as recommendations
+      api.getSimilarProperties(id).then(s => { setSimilarProps(s); setShowSimilar(true); }).catch(() => {});
     } catch (err) { showToast?.(err.message); }
   };
 
@@ -185,6 +189,48 @@ export default function PropertyDetail({ showToast }) {
             <button type="button" style={btn(C.off, C.dgray)} onClick={() => setShowVisitForm(false)}>{t.cancel}</button>
           </div>
         </form>
+      </Modal>}
+
+      {/* SIMILAR PROPERTIES MODAL */}
+      {showSimilar && similarProps.length > 0 && <Modal onClose={() => setShowSimilar(false)}>
+        <div style={{ maxWidth: 600 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+            <Lightbulb size={20} color={C.gold} />
+            <h2 style={{ color: C.navy, margin: 0 }}>{t.simTitle}</h2>
+          </div>
+          <p style={{ color: C.dgray, fontSize: 13, marginBottom: 16 }}>{t.simDesc}</p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10, maxHeight: 400, overflowY: 'auto' }}>
+            {similarProps.map(s => (
+              <div key={s.id} style={{ ...card(), padding: 14, cursor: 'pointer', borderLeft: `4px solid ${s.gradient || C.mid}`, transition: 'transform .15s' }}
+                onClick={() => { setShowSimilar(false); nav(`/app/properties/${s.id}`); }}
+                onMouseEnter={e => e.currentTarget.style.transform = 'translateX(4px)'}
+                onMouseLeave={e => e.currentTarget.style.transform = 'none'}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                  <div>
+                    <div style={{ fontWeight: 700, fontSize: 14, color: C.navy }}>{s.name}</div>
+                    <div style={{ fontSize: 12, color: C.dgray, display: 'flex', alignItems: 'center', gap: 4, marginTop: 2 }}>
+                      <MapPin size={12} />{s.zone} · {s.type}
+                    </div>
+                  </div>
+                  <div style={{ textAlign: 'right' }}>
+                    <div style={{ fontWeight: 800, fontSize: 16, color: C.navy }}>{s.price?.toLocaleString()}€</div>
+                    <div style={{ fontSize: 11, color: C.dgray }}>{s.availUnits}/{s.totalUnits} {t.units}</div>
+                  </div>
+                </div>
+                <div style={{ display: 'flex', gap: 12, marginTop: 8, fontSize: 12, color: C.dgray }}>
+                  <span><BedDouble size={12} style={{ verticalAlign: 'middle' }} /> {s.bedrooms}</span>
+                  <span><Bath size={12} style={{ verticalAlign: 'middle' }} /> {s.bathrooms}</span>
+                  <span><Maximize size={12} style={{ verticalAlign: 'middle' }} /> {s.area}m²</span>
+                  {s.zone === p.zone && <span style={{ ...badge(`${C.ok}20`, C.ok), fontSize: 10 }}>{t.simSameZone}</span>}
+                  {Math.abs(s.price - p.price) / p.price <= 0.1 && <span style={{ ...badge(`${C.info}20`, C.info), fontSize: 10 }}>{t.simSamePrice}</span>}
+                </div>
+              </div>
+            ))}
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 16 }}>
+            <button style={btn(C.off, C.dgray)} onClick={() => setShowSimilar(false)}>{t.cancel}</button>
+          </div>
+        </div>
       </Modal>}
     </div>
   );
